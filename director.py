@@ -1,7 +1,7 @@
 import logging
 import Uncyclopedia
 from Renderer import Renderer
-from Segment import SegmentModel
+from Segment import SegmentModel, SegmentType
 from nltk import tokenize
 
 
@@ -12,7 +12,10 @@ def direct(uncyclopedia_url: str, background_video_path: str):
 
     # Step 2: Split data
     summary_text_segments = tokenize.sent_tokenize(result.summary)
-    segments = [SegmentModel(text_segment, result.image_url_string) for text_segment in summary_text_segments]
+    title_segment = SegmentModel(text=result.title, segment_type=SegmentType.TITLE,
+                                 image_url_string=result.image_url_string)
+    caption_segments = [SegmentModel(text=text_segment, segment_type=SegmentType.CAPTION) for text_segment in summary_text_segments]
+    segments = [title_segment] + caption_segments
     logging.info(f"Created {len(segments)} segments")
 
     # Step 2: Render
