@@ -7,10 +7,10 @@ FIRST_HEADING_ID = "firstHeading"
 
 
 class UncyclopediaResult:
-    def __init__(self, title, summary, image_url_string):
+    def __init__(self, title, summary, main_image_url_string):
         self.title = title
         self.summary = summary
-        self.image_url_string = image_url_string
+        self.main_image_url_string = main_image_url_string
 
 
 class UncyclopediaManager:
@@ -24,15 +24,16 @@ class UncyclopediaManager:
         first_p_el = soup.find(id=MAIN_CONTENT_ID).find(name="p")
 
         img_url_string = None
-        first_img = soup.find(name="img")
-        if first_img and first_img.has_attr("src"):
-            img_url_string = PREFIX_FOR_IMG + first_img.attrs["src"]
+        first_img = soup.find(id=MAIN_CONTENT_ID).find(name="img")
+        if first_img and first_img.has_attr("srcset"):
+            img_url_string = PREFIX_FOR_IMG + first_img.attrs["srcset"].split()[0]
 
         # Remove "sup" and "sub"
         for tag in first_p_el.find_all(['sup', 'sub']):
             tag.decompose()
 
-        return UncyclopediaResult(title=title_el.text, summary=first_p_el.text, image_url_string=img_url_string)
+        return UncyclopediaResult(title=title_el.text, summary=first_p_el.text,
+                                  main_image_url_string=img_url_string)
 
 
 manager = UncyclopediaManager()

@@ -13,7 +13,7 @@ def direct(uncyclopedia_url: str, background_video_path: str):
     # Step 2: Split data
     summary_text_segments = tokenize.sent_tokenize(result.summary)
     title_segment = SegmentModel(text=result.title, segment_type=SegmentType.TITLE,
-                                 image_url_string=result.image_url_string)
+                                 image_url_string=result.main_image_url_string)
     caption_segments = [SegmentModel(text=text_segment, segment_type=SegmentType.CAPTION) for text_segment in summary_text_segments]
     segments = [title_segment] + caption_segments
     logging.info(f"Created {len(segments)} segments")

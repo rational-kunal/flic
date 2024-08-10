@@ -26,11 +26,12 @@ class SegmentModel:
     # TODO: Probably move this in its own manager
     @cached_property
     def image_file(self):
-        if self.image_url_string and len(self.image_url_string) <= 0:
+        # TODO: image_url_string validation
+        if self.image_url_string is None or len(self.image_url_string) <= 0:
             return None
 
         response = requests.get(self.image_url_string)
-        response.raise_for_status() # Raise an error for bad status codes
+        response.raise_for_status()  # Raise an error for bad status codes
 
         parsed_url = urlparse(self.image_url_string)
         filename = os.path.basename(parsed_url.path)
