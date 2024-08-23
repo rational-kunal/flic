@@ -3,9 +3,10 @@ import Uncyclopedia
 from Renderer import Renderer
 from Segment import SegmentModel, SegmentType
 from nltk import tokenize
+from pathlib import Path
 
 
-def direct(uncyclopedia_url: str, background_video_path: str):
+def direct(uncyclopedia_url: str, out_directory: Path, background_video_path: str):
     # Step 1: Fetch data
     result = Uncyclopedia.manager.fetch(uncyclopedia_url)
     logging.info(f"Data fetched from {uncyclopedia_url}")
@@ -20,7 +21,7 @@ def direct(uncyclopedia_url: str, background_video_path: str):
 
     # Step 2: Render
     renderer = Renderer(background_video_path=background_video_path)
-    renderer.create_video(segments)
+    renderer.create_video(segments, out_filename=out_directory.absolute().as_posix() + "/" + result.title)
 
 
 # For debugging
