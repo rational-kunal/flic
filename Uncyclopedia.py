@@ -23,6 +23,9 @@ class UncyclopediaManager:
 
         soup = BeautifulSoup(page.content, "html.parser")
 
+        if "UnNews" in uncyclopedia_url:
+            return self.transfromUnNews(soup)
+
         title_el = soup.find(id=FIRST_HEADING_ID)
 
         first_p_el = soup.find(id=MAIN_CONTENT_ID).find(name="div", recursive=False, attrs={"class": "mw-parser-output"}).find(name="p", recursive=False)
@@ -44,9 +47,36 @@ class UncyclopediaManager:
         logging.info(f"Fetched {result}")
         return result
 
+    def transfromUnNews(self, soup: BeautifulSoup) -> UncyclopediaResult:
+        heading = soup.find(name="span", attrs={"class": "mw-page-title-main"}).text
+
+        container = soup.find(name="div", attrs={"class": "mw-parser-output"})
+
+        img_url_string = None
+        first_img = container.find(name="img")
+        if first_img:
+            if first_img.has_attr("srcset"):
+                img_url_string = PREFIX_FOR_IMG + first_img.attrs["srcset"].split()[0]
+            elif first_img.has_attr("src"):
+                img_url_string = PREFIX_FOR_IMG + first_img.attrs["src"]
+
+        summary = ""
+        child_el = container.find(name="p")
+        while child_el:
+            if "h" in child_el.name:
+                break
+            if child_el.name == "p":
+                summary += child_el.text + "\n"
+            child_el = child_el.find_next_sibling()
+
+        return UncyclopediaResult(heading, summary, img_url_string)
+
+
 
 manager = UncyclopediaManager()
 
 if __name__ == "__main__":
-    result = manager.fetch("https://en.uncyclopedia.co/wiki/Special:RandomRootpage/Main")
+    random_url = "https://en.uncyclopedia.co/wiki/Special:RandomRootpage/Main"
+    news_url = "https://en.uncyclopedia.co/wiki/UnNews:Ukraine_finally_does_something_in_war_with_Russia"
+    result = manager.fetch(news_url)
     print(result)

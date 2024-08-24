@@ -21,7 +21,7 @@ class SegmentModel:
 
     @cached_property
     def audio_speech_file(self):
-        return AudioManager.manager.pyttsx_to_speech_audiofile(self.text)
+        return AudioManager.manager.to_speech_audiofile(self.text)
 
     # TODO: Probably move this in its own manager
     @cached_property
